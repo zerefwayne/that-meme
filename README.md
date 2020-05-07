@@ -1,5 +1,5 @@
 # That Meme
-A meme finding utility built using Go, ElasticSearch
+A meme finding utility built using Go, ElasticSearch, MongoDB
 
 ### Software Prerequisites
 
