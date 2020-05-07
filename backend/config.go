@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"time"
 
 	"github.com/gomodule/redigo/redis"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -13,21 +12,21 @@ import (
 
 // Connections ...
 type Connections struct {
-	DB *mongo.Client
+	DB    *mongo.Client
 	Cache redis.Conn
 }
 
 // ConnectDatabase ...
 func (c *Connections) ConnectDatabase() {
 
-	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+	ctx := context.Background()
 
 	host := "localhost"
 	port := "27017"
 	database := "thatmeme"
 
 	mongoURI := fmt.Sprintf("mongodb://%s:%s/%s", host, port, database)
-	
+
 	client, err := mongo.Connect(ctx, options.Client().ApplyURI(
 		mongoURI,
 	))
