@@ -1,10 +1,16 @@
 package handlers
 
 import (
+	"bytes"
 	"fmt"
 	"io/ioutil"
+	"mime/multipart"
 	"net/http"
 	"strings"
+
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/service/s3"
+	"github.com/zerefwayne/that-meme/config"
 )
 
 func respondWithError(w http.ResponseWriter, err error, statusCode int) {
@@ -27,6 +33,40 @@ func extractExtension(name string) (extension string) {
 
 }
 
+func uploadToS3(file multipart.File, header *multipart.FileHeader) error {
+
+	var size int64 = header.Size
+
+	buffer, err := ioutil.ReadAll(file)
+
+	if err != nil {
+		return err
+	}
+
+	fileBytes := bytes.NewReader(buffer)
+	fileType := http.DetectContentType(buffer)
+
+	path := "/memes/" + header.Filename
+
+	params := &s3.PutObjectInput{
+		Bucket:        aws.String("thatmemedev"),
+		Key:           aws.String(path),
+		Body:          fileBytes,
+		ContentLength: aws.Int64(size),
+		ContentType:   aws.String(fileType),
+	}
+
+	resp, err := config.Config.S3.PutObject(params)
+
+	if err != nil {
+		return err
+	}
+
+	fmt.Println(resp.String())
+
+	return nil
+}
+
 // UploadImageHandler ...
 func UploadImageHandler(w http.ResponseWriter, r *http.Request) {
 
@@ -36,7 +76,7 @@ func UploadImageHandler(w http.ResponseWriter, r *http.Request) {
 	// Parsing the multipart Form data
 	r.ParseMultipartForm(maxImageSize)
 
-	file, handler, err := r.FormFile("newMeme")
+	file, header, err := r.FormFile("newMeme")
 
 	if err != nil {
 		respondWithError(w, err, http.StatusInternalServerError)
@@ -46,31 +86,13 @@ func UploadImageHandler(w http.ResponseWriter, r *http.Request) {
 
 	defer file.Close()
 
-	fmt.Printf("name: %+v\nsize: %+v\nheader: %+v\n", handler.Filename, handler.Size, handler.Header)
-
-	extension := extractExtension(handler.Filename)
-
-	newFileName := fmt.Sprintf("meme*.%s", extension)
-
-	tempfile, err := ioutil.TempFile("data/memes", newFileName)
+	err = uploadToS3(file, header)
 
 	if err != nil {
 		respondWithError(w, err, http.StatusInternalServerError)
 		fmt.Println(err)
 		return
 	}
-
-	defer tempfile.Close()
-
-	imageBytes, err := ioutil.ReadAll(file)
-
-	if err != nil {
-		respondWithError(w, err, http.StatusInternalServerError)
-		fmt.Println(err)
-		return
-	}
-
-	tempfile.Write(imageBytes)
 
 	respondWithSuccess(w, "successfully uploaded the file")
 

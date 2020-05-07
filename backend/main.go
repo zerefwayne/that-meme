@@ -4,17 +4,25 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/joho/godotenv"
+	"github.com/zerefwayne/that-meme/config"
 	"github.com/zerefwayne/that-meme/routes"
 )
 
+func init() {
+	if err := godotenv.Load(); err != nil {
+		log.Print("No .env file found")
+	}
+}
+
 func main() {
 
-	var connections Connections
+	config.Config.ConnectDatabase()
 
-	connections.ConnectDatabase()
-	connections.ConnectCache()
+	config.Config.ConnectCache()
+	defer config.Config.Cache.Close()
 
-	defer connections.Cache.Close()
+	config.Config.ConnectS3()
 
 	handler := routes.NewHandler()
 
