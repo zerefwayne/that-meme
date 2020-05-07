@@ -10,43 +10,40 @@ import (
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/s3"
+	"github.com/google/uuid"
 	"github.com/zerefwayne/that-meme/config"
+	"github.com/zerefwayne/that-meme/utils"
 )
 
-func respondWithError(w http.ResponseWriter, err error, statusCode int) {
-	w.WriteHeader(statusCode)
-	fmt.Fprintf(w, "encountered error: %+v\n", err)
-}
-
-func respondWithSuccess(w http.ResponseWriter, message string) {
-	w.WriteHeader(http.StatusOK)
-	fmt.Fprintf(w, "%+v\n", message)
-}
-
-func extractExtension(name string) (extension string) {
+func generateUniqueName(name string) (filename string) {
 
 	fields := strings.Split(name, ".")
 
-	extension = fields[len(fields)-1]
+	extension := fields[len(fields)-1]
 
-	return
+	newFileName := uuid.New().String()
+
+	filename = fmt.Sprintf("m-%s.%s", newFileName, extension)
+
+	return filename
 
 }
 
-func uploadToS3(file multipart.File, header *multipart.FileHeader) error {
+func uploadToS3(file multipart.File, header *multipart.FileHeader) (string, error) {
 
 	var size int64 = header.Size
 
 	buffer, err := ioutil.ReadAll(file)
 
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	fileBytes := bytes.NewReader(buffer)
 	fileType := http.DetectContentType(buffer)
+	fileName := generateUniqueName(header.Filename)
 
-	path := "/memes/" + header.Filename
+	path := "/memes/" + fileName
 
 	params := &s3.PutObjectInput{
 		Bucket:        aws.String("thatmemedev"),
@@ -56,15 +53,18 @@ func uploadToS3(file multipart.File, header *multipart.FileHeader) error {
 		ContentType:   aws.String(fileType),
 	}
 
-	resp, err := config.Config.S3.PutObject(params)
+	_, err = config.Config.S3.PutObject(params)
 
 	if err != nil {
-		return err
+		return "", err
 	}
 
-	fmt.Println(resp.String())
+	bucketName := "thatmemedev"
+	regionName := "ap-south-1"
 
-	return nil
+	fileURL := fmt.Sprintf("https://%s.s3.%s.amazonaws.com%s", bucketName, regionName, path)
+
+	return fileURL, nil
 }
 
 // UploadImageHandler ...
@@ -79,21 +79,21 @@ func UploadImageHandler(w http.ResponseWriter, r *http.Request) {
 	file, header, err := r.FormFile("newMeme")
 
 	if err != nil {
-		respondWithError(w, err, http.StatusInternalServerError)
+		utils.RespondWithError(w, err, http.StatusInternalServerError)
 		fmt.Println(err)
 		return
 	}
 
 	defer file.Close()
 
-	err = uploadToS3(file, header)
+	fileURL, err := uploadToS3(file, header)
 
 	if err != nil {
-		respondWithError(w, err, http.StatusInternalServerError)
+		utils.RespondWithError(w, err, http.StatusInternalServerError)
 		fmt.Println(err)
 		return
 	}
 
-	respondWithSuccess(w, "successfully uploaded the file")
+	utils.RespondWithSuccess(w, fileURL)
 
 }
