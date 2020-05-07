@@ -7,7 +7,7 @@ import (
 )
 
 // ConnectCache ...
-func (c *Connections) ConnectCache() {
+func (gc *GlobalConfig) ConnectCache() {
 
 	redisURI := "redis://localhost"
 
@@ -17,7 +17,7 @@ func (c *Connections) ConnectCache() {
 		log.Fatal(err)
 	}
 
-	c.Cache = conn
+	gc.Cache = conn
 
 	log.Printf("cache	| connected successfully: %s\n", redisURI)
 }

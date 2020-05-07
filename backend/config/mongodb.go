@@ -10,7 +10,7 @@ import (
 )
 
 // ConnectDatabase ...
-func (c *Connections) ConnectDatabase() {
+func (gc *GlobalConfig) ConnectDatabase() {
 
 	ctx := context.Background()
 
@@ -28,7 +28,7 @@ func (c *Connections) ConnectDatabase() {
 		log.Fatal(err)
 	}
 
-	c.DB = client
+	gc.DB = client
 
 	log.Printf("database	| connected successfully: %s\n", mongoURI)
 

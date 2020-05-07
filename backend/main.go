@@ -4,18 +4,13 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/joho/godotenv"
 	"github.com/zerefwayne/that-meme/config"
 	"github.com/zerefwayne/that-meme/routes"
 )
 
-func init() {
-	if err := godotenv.Load(); err != nil {
-		log.Print("No .env file found")
-	}
-}
-
 func main() {
+
+	config.Config.LoadEnv()
 
 	config.Config.ConnectDatabase()
 

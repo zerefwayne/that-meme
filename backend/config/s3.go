@@ -11,7 +11,7 @@ import (
 )
 
 // ConnectS3 ...
-func (c *Connections) ConnectS3() {
+func (gc *GlobalConfig) ConnectS3() {
 
 	awsAccessKey := os.Getenv("AWS_ACCESS_KEY")
 	awsSecret := os.Getenv("AWS_SECRET")
@@ -29,7 +29,7 @@ func (c *Connections) ConnectS3() {
 
 	svc := s3.New(session.New(), cfg)
 
-	c.S3 = svc
+	gc.S3 = svc
 
 	log.Printf("s3		| connected successfully\n")
 
