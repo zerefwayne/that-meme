@@ -6,6 +6,7 @@ import (
 	"log"
 	"time"
 
+	"github.com/gomodule/redigo/redis"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -13,6 +14,7 @@ import (
 // Connections ...
 type Connections struct {
 	DB *mongo.Client
+	Cache redis.Conn
 }
 
 // ConnectDatabase ...
@@ -38,4 +40,20 @@ func (c *Connections) ConnectDatabase() {
 
 	log.Printf("database	| connected successfully: %s\n", mongoURI)
 
+}
+
+// ConnectCache ...
+func (c *Connections) ConnectCache() {
+
+	redisURI := "redis://localhost"
+
+	conn, err := redis.DialURL(redisURI)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	c.Cache = conn
+
+	log.Printf("cache	| connected successfully: %s\n", redisURI)
 }

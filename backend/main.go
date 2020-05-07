@@ -2,8 +2,11 @@ package main
 
 func main() {
 
-	var c Connections
+	var connections Connections
 
-	c.ConnectDatabase()
+	connections.ConnectDatabase()
+	connections.ConnectCache()
+
+	defer connections.Cache.Close()
 
 }
