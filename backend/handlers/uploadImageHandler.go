@@ -2,16 +2,19 @@ package handlers
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"mime/multipart"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/google/uuid"
 	"github.com/zerefwayne/that-meme/config"
+	"github.com/zerefwayne/that-meme/models"
 	"github.com/zerefwayne/that-meme/utils"
 )
 
@@ -76,6 +79,8 @@ func UploadImageHandler(w http.ResponseWriter, r *http.Request) {
 	// Parsing the multipart Form data
 	r.ParseMultipartForm(maxImageSize)
 
+	// Reading the file
+
 	file, header, err := r.FormFile("newMeme")
 
 	if err != nil {
@@ -86,6 +91,8 @@ func UploadImageHandler(w http.ResponseWriter, r *http.Request) {
 
 	defer file.Close()
 
+	// File Upload
+
 	fileURL, err := uploadToS3(file, header)
 
 	if err != nil {
@@ -94,6 +101,28 @@ func UploadImageHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	utils.RespondWithSuccess(w, fileURL)
+	// Reading the rest form data
+
+	meme := new(models.Meme)
+
+	meme.FileURL = fileURL
+	meme.Name = r.FormValue("name")
+	meme.Tags = strings.Split(r.FormValue("tags"), ";")
+	meme.Description = r.FormValue("description")
+	meme.Text = r.FormValue("text")
+	meme.Origin = r.FormValue("origin")
+	meme.CreatedAt = time.Now()
+	meme.UpdatedAt = time.Now()
+
+	err = models.InsertMeme(meme)
+
+	if err != nil {
+		utils.RespondWithError(w, err, http.StatusInternalServerError)
+		fmt.Println(err)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(*meme)
 
 }
