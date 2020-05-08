@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"mime/multipart"
 	"net/http"
 	"strings"
@@ -100,16 +99,22 @@ func AddToIndex(m *models.Meme) error {
 	defer res.Body.Close()
 
 	if res.IsError() {
-		log.Printf("[%s] Error indexing document", res.Status())
-	} else {
-		// Deserialize the response into a map.
-		var r map[string]interface{}
-		if err := json.NewDecoder(res.Body).Decode(&r); err != nil {
-			log.Printf("Error parsing the response body: %s", err)
-		} else {
-			// Print the response status and indexed document version.
-			log.Printf("[%s] %s; version=%d", res.Status(), r["result"], int(r["_version"].(float64)))
+
+		var errBody map[string]interface{}
+
+		err := json.NewDecoder(res.Body).Decode(&errBody)
+
+		if err != nil {
+			return err
 		}
+
+		errType := errBody["error"].(map[string]interface{})["type"]
+		errReason := errBody["error"].(map[string]interface{})["reason"]
+
+		returnError := fmt.Errorf("type: %+v, reason %+v", errType, errReason)
+
+		return returnError
+
 	}
 
 	return nil
