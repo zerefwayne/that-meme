@@ -1,6 +1,10 @@
 # That Meme
 A meme finding utility built using Go, AWS S3, ElasticSearch, MongoDB
 
+### Backend Layout
+
+![Hello](./.github/diagrams/app_layout.png)
+
 ### Software Prerequisites
 
 1. Go
@@ -11,3 +15,4 @@ A meme finding utility built using Go, AWS S3, ElasticSearch, MongoDB
 
 #### Go
 1. Mux
+
