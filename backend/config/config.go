@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/aws/aws-sdk-go/service/s3"
+	"github.com/elastic/go-elasticsearch/v7"
 	"github.com/gomodule/redigo/redis"
 	"github.com/joho/godotenv"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -16,6 +17,7 @@ type GlobalConfig struct {
 	Cache redis.Conn
 	S3    *s3.S3
 	Env
+	ES *elasticsearch.Client
 }
 
 // Env ...

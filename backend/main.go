@@ -19,6 +19,8 @@ func main() {
 
 	config.Config.ConnectS3()
 
+	config.Config.ConnectElasticSearch()
+
 	handler := routes.NewHandler()
 
 	log.Fatal(http.ListenAndServe(":5000", handler))
