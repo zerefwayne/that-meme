@@ -8,18 +8,15 @@ import (
 	"github.com/zerefwayne/that-meme/routes"
 )
 
-func main() {
-
+func init() {
 	config.Config.LoadEnv()
 
 	config.Config.ConnectDatabase()
-
-	config.Config.ConnectCache()
-	defer config.Config.Cache.Close()
-
 	config.Config.ConnectS3()
-
 	config.Config.ConnectElasticSearch()
+}
+
+func main() {
 
 	handler := routes.NewHandler()
 
