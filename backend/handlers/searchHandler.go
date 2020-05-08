@@ -5,12 +5,23 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 
 	"github.com/zerefwayne/that-meme/config"
 	"github.com/zerefwayne/that-meme/utils"
 )
+
+type result struct {
+	ID     string      `json:"id"`
+	Score  float64     `json:"score"`
+	Result interface{} `json:"result"`
+}
+
+type searchResponse struct {
+	Hits    int64    `json:"hits"`
+	Time    int64    `json:"time"`
+	Results []result `json:"results"`
+}
 
 // SearchHandler ...
 func SearchHandler(w http.ResponseWriter, r *http.Request) {
@@ -29,11 +40,9 @@ func SearchHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := json.NewEncoder(&buf).Encode(query); err != nil {
-
 		utils.RespondWithError(w, err, http.StatusInternalServerError)
 		fmt.Println(err)
 		return
-
 	}
 
 	es := config.Config.ES
@@ -55,17 +64,27 @@ func SearchHandler(w http.ResponseWriter, r *http.Request) {
 	defer res.Body.Close()
 
 	if res.IsError() {
-		var e map[string]interface{}
-		if err := json.NewDecoder(res.Body).Decode(&e); err != nil {
-			log.Fatalf("Error parsing the response body: %s", err)
-		} else {
-			// Print the response status and error information.
-			log.Fatalf("[%s] %s: %s",
-				res.Status(),
-				e["error"].(map[string]interface{})["type"],
-				e["error"].(map[string]interface{})["reason"],
-			)
+
+		var errBody map[string]interface{}
+
+		err := json.NewDecoder(res.Body).Decode(&errBody)
+
+		if err != nil {
+			utils.RespondWithError(w, err, http.StatusInternalServerError)
+			fmt.Println(err)
+			return
 		}
+
+		errType := errBody["error"].(map[string]interface{})["type"]
+		errReason := errBody["error"].(map[string]interface{})["reason"]
+
+		returnError := fmt.Errorf("type: %+v, reason %+v", errType, errReason)
+
+		utils.RespondWithError(w, returnError, http.StatusInternalServerError)
+		fmt.Println(err)
+
+		return
+
 	}
 
 	resBody := make(map[string]interface{})
@@ -76,20 +95,29 @@ func SearchHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Println(resBody)
+	response := new(searchResponse)
 
-	log.Printf(
-		"[%s] %d hits; took: %dms",
-		res.Status(),
-		int(resBody["hits"].(map[string]interface{})["total"].(map[string]interface{})["value"].(float64)),
-		int(resBody["took"].(float64)),
-	)
+	response.Hits = int64(resBody["hits"].(map[string]interface{})["total"].(map[string]interface{})["value"].(float64))
+	response.Time = int64(resBody["took"].(float64))
 
 	for _, hit := range resBody["hits"].(map[string]interface{})["hits"].([]interface{}) {
-		log.Printf(" * ID=%s, %s", hit.(map[string]interface{})["_id"], hit.(map[string]interface{})["_source"])
+
+		newResult := new(result)
+
+		newResult.ID = hit.(map[string]interface{})["_id"].(string)
+		newResult.Score = hit.(map[string]interface{})["_score"].(float64)
+		newResult.Result = hit.(map[string]interface{})["_source"]
+
+		response.Results = append(response.Results, *newResult)
 	}
 
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
-	fmt.Fprintln(w, "Successful search")
+
+	if err := json.NewEncoder(w).Encode(response); err != nil {
+		utils.RespondWithError(w, err, http.StatusInternalServerError)
+		fmt.Println(err)
+		return
+	}
 
 }
