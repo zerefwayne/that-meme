@@ -13,7 +13,7 @@ type Meme struct {
 	ID          string    `json:"id,omitempty" bson:"_id,omitempty"`
 	FileURL     string    `json:"file_url" bson:"file_url"`
 	Name        string    `json:"name" bson:"name"`
-	Tags        []string  `json:"tags" bson:"tags"`
+	Tags        string    `json:"tags" bson:"tags"`
 	Description string    `json:"description" bson:"description"`
 	Text        string    `json:"text" bson:"text"`
 	Origin      string    `json:"origin" bson:"origin"`
