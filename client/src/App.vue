@@ -1,12 +1,24 @@
 <template>
   <div id="app">
     <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
+      <router-link to="/">Search</router-link>|
+      <router-link to="/upload">Upload</router-link>
     </div>
-    <router-view/>
+    <router-view />
   </div>
 </template>
+
+<script lang="ts">
+import Vue from "vue";
+import { AxiosResponse } from "axios";
+export default Vue.extend({
+  mounted() {
+    this.axios.get("http://localhost:5000/").then((res: AxiosResponse) => {
+      console.log("Successfully connected backend", res);
+    });
+  }
+});
+</script>
 
 <style lang="scss">
 #app {
@@ -15,18 +27,5 @@
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-}
-
-#nav {
-  padding: 30px;
-
-  a {
-    font-weight: bold;
-    color: #2c3e50;
-
-    &.router-link-exact-active {
-      color: #42b983;
-    }
-  }
 }
 </style>
