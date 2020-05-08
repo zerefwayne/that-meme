@@ -22,6 +22,7 @@ func newRouter() *mux.Router {
 
 	r.HandleFunc("/", handlers.DefaultHandler)
 	r.HandleFunc("/api/upload", handlers.UploadImageHandler)
+	r.HandleFunc("/api/search", handlers.SearchHandler)
 
 	return r
 
