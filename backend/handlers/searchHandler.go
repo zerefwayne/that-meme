@@ -15,12 +15,14 @@ import (
 // SearchHandler ...
 func SearchHandler(w http.ResponseWriter, r *http.Request) {
 
+	searchQuery := r.URL.Query().Get("q")
+
 	var buf bytes.Buffer
 
 	query := map[string]interface{}{
 		"query": map[string]interface{}{
 			"multi_match": map[string]interface{}{
-				"query":  "hera",
+				"query":  searchQuery,
 				"fields": []string{"name", "text", "tags^2", "description"},
 			},
 		},
