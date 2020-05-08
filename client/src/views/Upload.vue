@@ -78,7 +78,7 @@
 
 <script lang="ts">
 import Vue from "vue";
-import { AxiosResponse, AxiosError } from 'axios';
+import { AxiosResponse, AxiosError } from "axios";
 export default Vue.extend({
   data() {
     return {
@@ -108,7 +108,8 @@ export default Vue.extend({
       console.log(this.uploadForm);
       console.log(formData);
 
-      this.axios.post("http://localhost:5000/api/upload", formData, {
+      this.axios
+        .post("http://localhost:5000/api/upload", formData, {
           headers: {
             "Content-Type": "multipart/form-data"
           }
@@ -121,6 +122,7 @@ export default Vue.extend({
         });
     },
     handleFileUpload() {
+      // eslint-disable-next-line
       this.uploadForm.file = (this.$refs.file as any).files[0];
     }
   }
