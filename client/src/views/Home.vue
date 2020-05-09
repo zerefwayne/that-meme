@@ -65,7 +65,7 @@ export default Vue.extend({
       const searchQuery = this.query;
 
       this.axios
-        .get("http://localhost:5000/api/search", { params: { q: searchQuery } })
+        .get("/api/search", { params: { q: searchQuery } })
         .then((res: AxiosResponse) => {
           this.showResults = true;
           this.hits = res.data.hits;

@@ -109,7 +109,7 @@ export default Vue.extend({
       console.log(formData);
 
       this.axios
-        .post("http://localhost:5000/api/upload", formData, {
+        .post("/api/upload", formData, {
           headers: {
             "Content-Type": "multipart/form-data"
           }
