@@ -2,7 +2,6 @@ package config
 
 import (
 	"log"
-	"os"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/credentials"
@@ -13,8 +12,8 @@ import (
 // ConnectS3 ...
 func (gc *GlobalConfig) ConnectS3() {
 
-	awsAccessKey := os.Getenv("AWS_ACCESS_KEY")
-	awsSecret := os.Getenv("AWS_SECRET")
+	awsAccessKey := gc.Env.AWSConfig.AccessKey
+	awsSecret := gc.Env.AWSConfig.Secret
 	token := ""
 
 	creds := credentials.NewStaticCredentials(awsAccessKey, awsSecret, token)
