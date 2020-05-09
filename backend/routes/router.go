@@ -20,7 +20,7 @@ func newRouter() *mux.Router {
 
 	r := mux.NewRouter()
 
-	r.HandleFunc("/", handlers.DefaultHandler)
+	r.HandleFunc("/api/hello", handlers.DefaultHandler)
 	r.HandleFunc("/api/upload", handlers.UploadImageHandler)
 	r.HandleFunc("/api/search", handlers.SearchHandler)
 

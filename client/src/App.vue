@@ -13,7 +13,7 @@ import Vue from "vue";
 import { AxiosResponse } from "axios";
 export default Vue.extend({
   mounted() {
-    this.axios.get("/").then((res: AxiosResponse) => {
+    this.axios.get("/api/hello").then((res: AxiosResponse) => {
       console.log("Successfully connected backend", res);
     });
   }
