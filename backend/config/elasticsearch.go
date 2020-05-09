@@ -11,7 +11,7 @@ func (gc *GlobalConfig) ConnectElasticSearch() {
 
 	cfg := elasticsearch.Config{
 		Addresses: []string{
-			"http://localhost:9200",
+			gc.Env.ElasticSearchEnv.ClientURL,
 		},
 	}
 

@@ -14,9 +14,9 @@ func (gc *GlobalConfig) ConnectDatabase() {
 
 	ctx := context.Background()
 
-	host := "localhost"
-	port := "27017"
-	database := "thatmeme"
+	host := gc.Env.MongoDbEnv.Host
+	port := gc.Env.MongoDbEnv.Port
+	database := gc.Env.MongoDbEnv.Database
 
 	mongoURI := fmt.Sprintf("mongodb://%s:%s/%s", host, port, database)
 

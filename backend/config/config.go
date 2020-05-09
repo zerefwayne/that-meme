@@ -22,15 +22,35 @@ type GlobalConfig struct {
 
 // Env ...
 type Env struct {
-	AWSConfig
+	AWSConfig AWSEnv
+	ElasticSearchEnv
+	MongoDbEnv
 }
 
-// AWSConfig ...
-type AWSConfig struct {
+// AWSEnv ...
+type AWSEnv struct {
 	Secret     string
 	AccessKey  string
 	BucketName string
 	RegionCode string
+}
+
+// ElasticSearchEnv ...
+type ElasticSearchEnv struct {
+	ClientURL string
+}
+
+// MongoDbEnv ...
+type MongoDbEnv struct {
+	Host     string
+	Port     string
+	Database string
+}
+
+// Services ...
+type Services struct {
+	MongoDbURL       string
+	ElasticsearchURL string
 }
 
 var (
@@ -49,5 +69,11 @@ func (gc *GlobalConfig) LoadEnv() {
 	gc.Env.AWSConfig.BucketName = os.Getenv("AWS_S3_BUCKET_NAME")
 	gc.Env.AWSConfig.RegionCode = os.Getenv("AWS_S3_REGION_CODE")
 	gc.Env.AWSConfig.Secret = os.Getenv("AWS_SECRET")
+
+	gc.Env.MongoDbEnv.Host = os.Getenv("MONGODB_HOST")
+	gc.Env.MongoDbEnv.Port = os.Getenv("MONGODB_PORT")
+	gc.Env.MongoDbEnv.Database = os.Getenv("MONGODB_DATABASE")
+
+	gc.Env.ElasticSearchEnv.ClientURL = os.Getenv("ELASTICSEARCH_URL")
 
 }
