@@ -13,7 +13,7 @@ Vue.config.productionTip = false;
 
 Vue.use(VueAxios, axios);
 
-axios.defaults.baseURL = "http://localhost";
+axios.defaults.baseURL = "http://13.126.188.33/";
 
 new Vue({
   router,
