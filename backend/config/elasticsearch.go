@@ -13,6 +13,8 @@ func (gc *GlobalConfig) ConnectElasticSearch() {
 		Addresses: []string{
 			gc.Env.ElasticSearchEnv.ClientURL,
 		},
+		Username: gc.Env.ElasticSearchEnv.Username,
+		Password: gc.Env.ElasticSearchEnv.Password,
 	}
 
 	es, err := elasticsearch.NewClient(cfg)

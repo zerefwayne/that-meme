@@ -38,6 +38,8 @@ type AWSEnv struct {
 // ElasticSearchEnv ...
 type ElasticSearchEnv struct {
 	ClientURL string
+	Username  string
+	Password  string
 }
 
 // MongoDbEnv ...
@@ -45,6 +47,9 @@ type MongoDbEnv struct {
 	Host     string
 	Port     string
 	Database string
+	User     string
+	Password string
+	SrvMode  string
 }
 
 // Services ...
@@ -73,7 +78,12 @@ func (gc *GlobalConfig) LoadEnv() {
 	gc.Env.MongoDbEnv.Host = os.Getenv("MONGODB_HOST")
 	gc.Env.MongoDbEnv.Port = os.Getenv("MONGODB_PORT")
 	gc.Env.MongoDbEnv.Database = os.Getenv("MONGODB_DATABASE")
+	gc.Env.MongoDbEnv.User = os.Getenv("MONGODB_USER")
+	gc.Env.MongoDbEnv.Password = os.Getenv("MONGODB_PASSWORD")
+	gc.Env.MongoDbEnv.SrvMode = os.Getenv("MONGODB_SRV")
 
 	gc.Env.ElasticSearchEnv.ClientURL = os.Getenv("ELASTICSEARCH_URL")
+	gc.Env.ElasticSearchEnv.Username = os.Getenv("ELASTICSEARCH_USERNAME")
+	gc.Env.ElasticSearchEnv.Password = os.Getenv("ELASTICSEARCH_PASSWORD")
 
 }
