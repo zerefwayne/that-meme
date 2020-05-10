@@ -1,7 +1,7 @@
 # That Meme
 A meme finding utility built using Go, AWS S3, ElasticSearch, MongoDB
 
-### Backend Layout
+### Production Layout
 
 ![Production Layout](./.github/diagrams/production_setup.png)
 
