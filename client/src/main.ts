@@ -15,7 +15,7 @@ Vue.use(VueAxios, axios);
 
 console.log(process.env)
 
-axios.defaults.baseURL = process.env.API_URL || "http://localhost:5000";
+axios.defaults.baseURL = process.env.VUE_APP_API_URL || "http://localhost:5000";
 
 new Vue({
   router,
