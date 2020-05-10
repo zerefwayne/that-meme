@@ -2,7 +2,7 @@
   <div class="home">
     <h1>Search</h1>
     <div class="app-search">
-      <form @submit.prevent="search">
+      <form autocomplete="off"  @submit.prevent="search">
         <div class="form-group">
           <label for="form-name">Search</label>
           <input

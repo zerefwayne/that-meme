@@ -10,12 +10,17 @@
 
 <script lang="ts">
 import Vue from "vue";
-import { AxiosResponse } from "axios";
+import { AxiosResponse, AxiosError } from "axios";
 export default Vue.extend({
   mounted() {
-    this.axios.get("/api/hello").then((res: AxiosResponse) => {
-      console.log("Successfully connected backend", res);
-    });
+    this.axios
+      .get("/api/hello")
+      .then((res: AxiosResponse) => {
+        console.log("Successfully connected backend", res);
+      })
+      .catch((err: AxiosError) => {
+        alert(err);
+      });
   }
 });
 </script>
