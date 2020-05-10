@@ -1,1 +1,1 @@
-“web: bin/that-meme”
+“web: ./bin/that-meme”
