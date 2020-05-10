@@ -3,7 +3,7 @@ A meme finding utility built using Go, AWS S3, ElasticSearch, MongoDB
 
 ### Backend Layout
 
-![Hello](./.github/diagrams/app_layout.png)
+![Production Layout](./.github/diagrams/production_setup.png)
 
 ### Software Prerequisites
 
