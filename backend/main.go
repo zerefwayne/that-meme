@@ -18,7 +18,7 @@ func init() {
 }
 
 func generatePort() string {
-	port := os.Getenv("PORT")
+	port := os.Getenv("LISTEN_PORT")
 	if port == "" {
 		return ":5000"
 	}
