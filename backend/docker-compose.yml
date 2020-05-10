@@ -1,18 +1,5 @@
 version: "3.3"
 services:
-#   nginx:
-#     container_name: "nginx"
-#     restart: always
-#     build:
-#       dockerfile: Dockerfile
-#       context: ./nginx
-#     ports:
-#       - "80:80"
-#     depends_on:
-#       - "api"
-#     networks:
-#       - "thatmemenet"
-#       - "outside"
   api:
     container_name: "api"
     build: "."
@@ -20,50 +7,8 @@ services:
       - "80:5000"
     volumes:
       - api-data:/go/src/app
-    # depends_on:
-    #   - "mongodb"
     restart: "always"
-    # networks:
-    #   - thatmemenet
     env_file:
       - ".env"
-    # environment:
-    #   - MONGODB_HOST=mongodb
-    #   - MONGODB_PORT=27017
-    #   - MONGODB_DATABASE=thatmemedev
-    #   - ELASTICSEARCH_URL=http://elasticsearch:9200/
-  # mongodb:
-  #   image: "mongo:latest"
-  #   container_name: "mongodb"
-  #   ports:
-  #     - "27017:27017"
-  #   # depends_on:
-  #   #   - "elasticsearch"
-  #   restart: "always"
-  #   volumes:
-  #     - mongodb-data:/data
-  #   networks:
-  #     - thatmemenet
-  # elasticsearch:
-  #   image: "elastic/elasticsearch:7.6.2"
-  #   container_name: "elasticsearch"
-  #   restart: "always"
-  #   ports:
-  #     - "9200:9200"
-  #   environment:
-  #     - discovery.type=single-node
-  #   volumes:
-  #     - es-data:/usr/share/elasticsearch/data
-  #   networks:
-  #     - thatmemenet
-
 volumes:
   api-data:
-  # mongodb-data:
-  # es-data:
-# networks:
-  # thatmemenet:
-  #   driver: bridge
-#     internal: true
-#   outside:
-#     driver: bridge
